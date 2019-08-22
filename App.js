@@ -1,10 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Button } from 'react-native';
+import ToDoList from './Components/ToDoList';
 
 export default function App() {
+  const dummyData = [{key: '123', text: 'get tickets'}, {key: '456', text: 'get ride'},{key: '789', text: 'get help'}]
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+      <ToDoList data={dummyData}></ToDoList>
     </View>
   );
 }
