@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, TextInput, Button } from 'react-native';
 
 export default function Input(props) {
-    const [textValue, setTextValue] = useState('');
-    //console.log(props)
 
     return (
         <View style={styles.container}>
@@ -16,11 +14,10 @@ export default function Input(props) {
             <Button
                 style={styles.button}
                 onPress={() => {
-                    props.addTodo(textValue)
-                    setTextValue('');
+                    props.addTodo()
                     }
                 }
-                title='Add'
+                title='+'
                 color='blue' 
             />
         </View>

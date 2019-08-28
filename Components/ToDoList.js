@@ -6,6 +6,7 @@ import Input from './Input';
 export default function ToDoList(props) {
     return (
         <View style={styles.container}>
+            <Text>CheckList</Text>
             <Input 
                 textValue={props.textValue}
                 updateTextValue={props.updateTextValue}
