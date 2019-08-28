@@ -24,7 +24,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
-    }
+      "bundleIdentifier": "com.jonathanthomas.checklist"
+    },
+    "android": {
+      "package": "com.jonathanthomas.checklist"
+    },
+    "description": ""
   }
 }
