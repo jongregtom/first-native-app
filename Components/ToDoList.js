@@ -16,6 +16,8 @@ export default function ToDoList(props) {
             <FlatList
                 style={styles.list}
                 data={props.todos}
+                extraData={props.todos}
+                keyExtractor={props.todos.id}
                 renderItem={({item}) => 
                     <ToDo 
                         todo={item} 

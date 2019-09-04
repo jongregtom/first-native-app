@@ -10,7 +10,7 @@ export default function ToDo(props) {
                 title='x'
                 color='red'
             />
-            <Text>{props.todo.key}</Text>
+            <Text>{props.todo.text}</Text>
         </View>
     )
 }
