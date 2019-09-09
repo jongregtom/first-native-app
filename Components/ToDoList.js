@@ -1,12 +1,11 @@
 import React from 'react';
 import { StyleSheet, Text, FlatList, View } from 'react-native';
-import ToDo from './ToDo';
+import Todo from './Todo';
 import Input from './Input';
 
-export default function ToDoList(props) {
+export default function TodoList(props) {
     return (
         <View style={styles.container}>
-            <Text>CheckList</Text>
             <Input 
                 textValue={props.textValue}
                 updateTextValue={props.updateTextValue}
@@ -19,10 +18,10 @@ export default function ToDoList(props) {
                 extraData={props.todos}
                 keyExtractor={props.todos.id}
                 renderItem={({item}) => 
-                    <ToDo 
-                        todo={item} 
+                    <Todo 
+                        todoGroup={item} 
                         deleteTodo={props.deleteTodo}>
-                    </ToDo>
+                    </Todo>
                 }
             />
         </View>

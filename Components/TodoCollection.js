@@ -1,16 +1,20 @@
 import React from 'react';
 import { StyleSheet, View, Text, Button } from 'react-native';
 
-export default function Todo(props) {
+export default function TodoCollection(props) {
+    console.log('props', props.key)
     return (
         
         <View style={styles.container}>
             <Button
-                onPress={() => props.deleteTodo(props.todo.id)}
+                onPress={() => props.deleteTodoCollection(props.todoCollection.id)}
                 title='x'
                 color='red'
             />
-            <Text>{props.todo}</Text>
+            <Button 
+                title={props.todoCollection.data.name}
+                onPress={() => console.log('pressed')}
+            />
         </View>
     )
 }
@@ -23,4 +27,3 @@ const styles = StyleSheet.create({
      flexDirection: 'row'
     }
   });
-  

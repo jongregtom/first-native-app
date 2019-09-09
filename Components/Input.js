@@ -3,18 +3,21 @@ import { StyleSheet, View, TextInput, Button } from 'react-native';
 
 export default function Input(props) {
 
+    const [textValue, setTextValue] = useState('');
+
     return (
         <View style={styles.container}>
             <TextInput
                 style={styles.input}
-                onChangeText={(text) => props.updateTextValue(text)}
-                value={props.textValue}
-                placeHolder='add new'
+                onChangeText={(text) => setTextValue(text)}
+                value={textValue}
+                placeholder={props.placeholder}
             />
             <Button
                 style={styles.button}
                 onPress={() => {
-                    props.addTodo()
+                    props.addToDB(textValue)
+                    setTextValue('');
                     }
                 }
                 title='+'
@@ -30,7 +33,7 @@ const styles = StyleSheet.create({
         flex: 1
     }, 
     input: {
-        borderWidth: 1,
+        //borderWidth: 1,
         width: 200, 
         height: 30
     },
