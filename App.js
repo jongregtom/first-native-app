@@ -27,27 +27,49 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 function Home() {
+  const [todoCollectionIds, setTodoCollectionIds] = useState([]);
   const [todoCollections, setTodoCollections] = useState([]);
   const [todos, setTodos] = useState([]);
   const [textValue, setTextValue] = useState('');
   const [userId, setUserId] = useState('1234');
 
   useEffect(() => {
-    let todos = [];
-    db.collection("todos").get().then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-          todos.push({id: doc.id, data: doc.data()});
-      });
-    }).then(() => {
-      setTodos(todos)
-    });
-    getTodoCollections(userId);
+    getTodoCollectionIds();
   
   }, [])
 
   useEffect(() => {
     console.log('new collections: ', todoCollections)
   }, [todoCollections])
+  
+  useEffect(() => {
+    console.log('tcIDState:', todoCollectionIds)
+    getTodoCollections(todoCollectionIds);
+    
+  }, [todoCollectionIds])
+  
+  const getTodoCollectionIds = function() {
+    console.log('this ran')
+    return db.collection('users').doc(userId)
+      .onSnapshot(function(doc) {
+      setTodoCollectionIds(doc.data().todoCollections)
+    })
+  }
+
+  const getTodoCollections = function(ids) {
+    setTodoCollections([])
+    console.log('ids: ', ids)
+    const getTodoCollectionById = function(id, callback) {
+      db.collection('todoCollections').doc(id)
+        .get().then(function(doc){
+        callback({id: doc.id, data: doc.data()})
+      })
+    }
+    console.log(ids)
+    ids.forEach(function(id) {
+      getTodoCollectionById(id, (todoCollection) => {setTodoCollections(prevState => [...prevState, todoCollection])})
+    })
+  }
 
   const updateTextValue = function(text) {
     setTextValue(text)
@@ -77,23 +99,23 @@ function Home() {
     })
   }
 
-  const getTodoCollections = async function(userId) {
-    let todoCollectionIds;
-    await db.collection('users').doc(userId)
-      .get().then(function(doc) {
-        //setTodoCollections(doc.data().todoCollections)
-        todoCollectionIds = (doc.data().todoCollections);
-    })
-    const getTodoCollectionById = function(id, callback) {
-      db.collection('todoCollections').doc(id)
-        .get().then(function(doc){
-        callback({id: doc.id, data: doc.data()})
-      })
-    }
-    todoCollectionIds.forEach(function(id) {
-      getTodoCollectionById(id, (todoCollection) => {setTodoCollections(prevState => [...prevState, todoCollection])})
-    })
-  }
+  // const getTodoCollections = async function(userId) {
+  //   let todoCollectionIds;
+  //   await db.collection('users').doc(userId)
+  //     .get().then(function(doc) {
+  //       //setTodoCollections(doc.data().todoCollections)
+  //       todoCollectionIds = (doc.data().todoCollections);
+  //   })
+  //   const getTodoCollectionById = function(id, callback) {
+  //     db.collection('todoCollections').doc(id)
+  //       .get().then(function(doc){
+  //       callback({id: doc.id, data: doc.data()})
+  //     })
+  //   }
+  //   todoCollectionIds.forEach(function(id) {
+  //     getTodoCollectionById(id, (todoCollection) => {setTodoCollections(prevState => [...prevState, todoCollection])})
+  //   })
+  // }
 
   return (
     <View style={styles.container}>
