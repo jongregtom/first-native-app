@@ -14,7 +14,11 @@ export default function TodoCollectionList(props) {
                     <TodoCollection
                         todoCollection={item} 
                         deleteTodoCollection={props.deleteTodoCollection}
-                        keyExtractor={item.id}>
+                        deleteTodo={props.deleteTodo}
+                        getTodoCollectionById={props.getTodoCollectionById}
+                        key={item.id}
+                        navigation={props.navigation}
+                        addTodo={props.addTodo}>
                     </TodoCollection>
                 }
             />

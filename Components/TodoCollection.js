@@ -12,7 +12,7 @@ export default function TodoCollection(props) {
             />
             <Button 
                 title={props.todoCollection.data.name}
-                onPress={() => console.log('pressed')}
+                onPress={() => props.navigation.navigate('TodoScreen', props)}
             />
         </View>
     )

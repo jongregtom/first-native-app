@@ -6,11 +6,14 @@ export default function Todo(props) {
         
         <View style={styles.container}>
             <Button
-                onPress={() => props.deleteTodo(props.todo.id)}
+                onPress={() => props.deleteTodo(props.todoCollectionId, props.todo)}
                 title='x'
                 color='red'
             />
-            <Text>{props.todo}</Text>
+            <Button 
+                title={props.todo.text}
+                onPress={() => alert(props.todo.text)}
+            />
         </View>
     )
 }

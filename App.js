@@ -4,6 +4,7 @@ import { AuthSession } from 'expo';
 const firebase = require("firebase");
 // Required for side-effects
 require("firebase/firestore");
+import TodoScreen from './Components/TodoScreen';
 import Input from './Components/Input';
 import TodoCollectionList from './Components/TodoCollectionList';
 import { createAppContainer } from 'react-navigation';
@@ -26,46 +27,58 @@ firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-function Home() {
+function TodoCollectionsScreen(props) {
   const [todoCollectionIds, setTodoCollectionIds] = useState([]);
   const [todoCollections, setTodoCollections] = useState([]);
+  const [todoIds, setTodoIds] = useState([]);
   const [todos, setTodos] = useState([]);
-  const [textValue, setTextValue] = useState('');
   const [userId, setUserId] = useState('1234');
 
   useEffect(() => {
     getTodoCollectionIds();
   
   }, [])
-
-  useEffect(() => {
-    console.log('new collections: ', todoCollections)
-  }, [todoCollections])
   
   useEffect(() => {
-    console.log('tcIDState:', todoCollectionIds)
     getTodoCollections(todoCollectionIds);
     
   }, [todoCollectionIds])
   
   const getTodoCollectionIds = function() {
-    console.log('this ran')
     return db.collection('users').doc(userId)
       .onSnapshot(function(doc) {
-      setTodoCollectionIds(doc.data().todoCollections)
+      setTodoCollectionIds(doc.data().todoCollections.reverse())
+    })
+  }
+
+  const getTodoCollectionById = function(id, callback) {
+    db.collection('todoCollections').doc(id)
+      .onSnapshot(function(doc){
+      callback(doc.data())
     })
   }
 
   const getTodoCollections = function(ids) {
     setTodoCollections([])
-    console.log('ids: ', ids)
     const getTodoCollectionById = function(id, callback) {
       db.collection('todoCollections').doc(id)
         .get().then(function(doc){
         callback({id: doc.id, data: doc.data()})
       })
     }
-    console.log(ids)
+    ids.forEach(function(id) {
+      getTodoCollectionById(id, (todoCollection) => {setTodoCollections(prevState => [...prevState, todoCollection])})
+    })
+  }
+
+  const getTodos = function(id) {
+    setTodos([])
+    const getTodoById = function(id, callback) {
+      db.collection('todos').doc(id)
+        .get().then(function(doc){
+        callback({id: doc.id, data: doc.data()})
+      })
+    }
     ids.forEach(function(id) {
       getTodoCollectionById(id, (todoCollection) => {setTodoCollections(prevState => [...prevState, todoCollection])})
     })
@@ -75,13 +88,16 @@ function Home() {
     setTextValue(text)
   }
 
-  const deleteTodo = function(id) {
-    db.collection('todos').doc(id).delete();
+  const deleteTodo = function(todoCollectionId, todo) {
+    db.collection('todoCollections').doc(todoCollectionId).update({
+      todos: firebase.firestore.FieldValue.arrayRemove(todo)
+    });
   }
 
-  const addTodo = function() {
-    db.collection('todos').add({todo: textValue})
-  }
+  // const addTodo = function(value) {
+  //   db.collection('todoCollections').doc(id).update({todos: firebase.firestore.FieldValue.arrayUnion(value)
+  // })
+  // }
 
   const addTodoCollection = function(value) {
     db.collection('todoCollections').add({name: value, createdBy: userId, todos: []})
@@ -92,6 +108,12 @@ function Home() {
     })
   }
 
+  const addTodo = function(id, todo) {
+    db.collection('todoCollections').doc(id).update({
+      todos: firebase.firestore.FieldValue.arrayUnion(todo)
+    })
+  }
+
   const deleteTodoCollection = function(id) {
     db.collection('todoCollections').doc(id).delete();
     db.collection('users').doc(userId).update({
@@ -99,38 +121,21 @@ function Home() {
     })
   }
 
-  // const getTodoCollections = async function(userId) {
-  //   let todoCollectionIds;
-  //   await db.collection('users').doc(userId)
-  //     .get().then(function(doc) {
-  //       //setTodoCollections(doc.data().todoCollections)
-  //       todoCollectionIds = (doc.data().todoCollections);
-  //   })
-  //   const getTodoCollectionById = function(id, callback) {
-  //     db.collection('todoCollections').doc(id)
-  //       .get().then(function(doc){
-  //       callback({id: doc.id, data: doc.data()})
-  //     })
-  //   }
-  //   todoCollectionIds.forEach(function(id) {
-  //     getTodoCollectionById(id, (todoCollection) => {setTodoCollections(prevState => [...prevState, todoCollection])})
-  //   })
-  // }
-
   return (
     <View style={styles.container}>
       <Input addToDB={addTodoCollection} placeholder={'Add New Collection'}></Input>
-      <TodoCollectionList todoCollections={todoCollections} deleteTodoCollection={deleteTodoCollection}></TodoCollectionList>
+      <TodoCollectionList todoCollections={todoCollections} deleteTodoCollection={deleteTodoCollection} deleteTodo={deleteTodo} addTodo={addTodo} getTodoCollectionById={getTodoCollectionById} navigation={props.navigation}></TodoCollectionList>
       {/*<TodoList todos={todos} textValue={textValue} updateTextValue={updateTextValue} deleteTodo={deleteTodo} addTodo={addTodo} ></TodoList>*/}
     </View>
   );
 }
 
 const AppNavigator = createStackNavigator({
-  Home: Home,
+  TodoCollectionsScreen: TodoCollectionsScreen,
+  TodoScreen: TodoScreen,
 },
 {
-  initialRouteName: 'Home',
+  initialRouteName: 'TodoCollectionsScreen',
 })
 
 const AppContainer = createAppContainer(AppNavigator);
