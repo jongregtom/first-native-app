@@ -5,6 +5,7 @@ import Input from './Input';
 
 export default function TodoScreen(props) {
     const params = props.navigation.state.params;
+    console.log('params', params)
     const [todoCollectionValue, setTodoCollectionValue] = useState(null);
     const [todosValue, setTodosValue] = useState([]);
 

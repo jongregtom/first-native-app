@@ -7,10 +7,16 @@ require("firebase/firestore");
 import TodoScreen from './Components/TodoScreen';
 import Input from './Components/Input';
 import TodoCollectionList from './Components/TodoCollectionList';
+import SignOutButton from './Components/SignOutButton';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { _confirmProps } from 'react-native/Libraries/Modal/Modal';
 import { UserInterfaceIdiom } from 'expo-constants';
+import Amplify, { Auth } from 'aws-amplify';
+import awsconfig from './aws-exports';
+import { withAuthenticator } from "aws-amplify-react-native"
+Amplify.configure(awsconfig);
+
 
 //const db = SQLite.openDatabase('db.db');
 
@@ -30,18 +36,19 @@ const db = firebase.firestore();
 function TodoCollectionsScreen(props) {
   const [todoCollectionIds, setTodoCollectionIds] = useState([]);
   const [todoCollections, setTodoCollections] = useState([]);
-  const [todoIds, setTodoIds] = useState([]);
-  const [todos, setTodos] = useState([]);
   const [userId, setUserId] = useState('1234');
 
   useEffect(() => {
     getTodoCollectionIds();
-  
+    let getUser = async function() {
+      let user = await Auth.currentAuthenticatedUser();
+      console.log('user: ', user.attributes);
+    }
+    getUser();
   }, [])
   
   useEffect(() => {
     getTodoCollections(todoCollectionIds);
-    
   }, [todoCollectionIds])
   
   const getTodoCollectionIds = function() {
@@ -123,16 +130,40 @@ function TodoCollectionsScreen(props) {
 
   return (
     <View style={styles.container}>
-      <Input addToDB={addTodoCollection} placeholder={'Add New Collection'}></Input>
+      <Input addToDB={addTodoCollection} placeholder={'Add New List'}></Input>
       <TodoCollectionList todoCollections={todoCollections} deleteTodoCollection={deleteTodoCollection} deleteTodo={deleteTodo} addTodo={addTodo} getTodoCollectionById={getTodoCollectionById} navigation={props.navigation}></TodoCollectionList>
       {/*<TodoList todos={todos} textValue={textValue} updateTextValue={updateTextValue} deleteTodo={deleteTodo} addTodo={addTodo} ></TodoList>*/}
     </View>
   );
 }
 
-const AppNavigator = createStackNavigator({
-  TodoCollectionsScreen: TodoCollectionsScreen,
-  TodoScreen: TodoScreen,
+const AppNavigator = createStackNavigator(
+  {
+  TodoCollectionsScreen: {
+    screen: TodoCollectionsScreen,
+    navigationOptions: ({screenProps}) => ({
+      title: `My Lists`,
+      headerRight: (
+        <Button onPress={() => Auth.signOut().then(data => screenProps.signOut())
+            .catch(err => console.log(err))} title='Sign Out' />
+      )
+    }),
+  },
+  TodoScreen: {
+    screen: TodoScreen,
+    navigationOptions: ({navigation}) => ({
+      title: navigation.state.params.todoCollection.data.name,
+      headerRight: (
+        <Button onPress={() => props.rerender()} title='Sign Out' />
+      )
+    }),
+  },
+  // defaultNavigationOptions: {
+  //   headerRight: (
+  //     <Button onPress={() => Auth.signOut().then(data => forceUpdate())
+  //         .catch(err => console.log(err))} title='Sign Out' />
+  //   )
+  // },
 },
 {
   initialRouteName: 'TodoCollectionsScreen',
@@ -140,12 +171,23 @@ const AppNavigator = createStackNavigator({
 
 const AppContainer = createAppContainer(AppNavigator);
 
-export default class App extends React.Component {
+class App extends React.Component {
+  constructor(props) {
+    super(props)
+    this.signOut = this.signOut.bind(this);
+  }
+  signOut() {
+    //remove user credentials and redirect to sign in page
+    Auth.signOut()
+    .then(() => this.props.onStateChange('signedOut'))
+    .catch(err => console.log(err));
+  }
   render() {
-    return <AppContainer />;
+    return <AppContainer screenProps={{signOut: this.signOut}}/>;
   }
 }
 
+export default withAuthenticator(App, false);
 
 const styles = StyleSheet.create({
   container: {

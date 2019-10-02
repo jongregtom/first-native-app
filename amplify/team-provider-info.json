@@ -1,0 +1,19 @@
+{
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "firstnativeapp-dev-20190927225639-authRole",
+            "UnauthRoleArn": "arn:aws:iam::350635842956:role/firstnativeapp-dev-20190927225639-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::350635842956:role/firstnativeapp-dev-20190927225639-authRole",
+            "Region": "us-west-2",
+            "DeploymentBucketName": "firstnativeapp-dev-20190927225639-deployment",
+            "UnauthRoleName": "firstnativeapp-dev-20190927225639-unauthRole",
+            "StackName": "firstnativeapp-dev-20190927225639",
+            "StackId": "arn:aws:cloudformation:us-west-2:350635842956:stack/firstnativeapp-dev-20190927225639/bd50e8f0-e1b4-11e9-a1de-02578391ed14"
+        },
+        "categories": {
+            "auth": {
+                "firstnativeapp5bbcf183": {}
+            }
+        }
+    }
+}

@@ -1,0 +1,9 @@
+{
+	"auth": {
+		"firstnativeapp5bbcf183": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": []
+		}
+	}
+}
