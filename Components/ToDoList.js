@@ -10,8 +10,8 @@ export default function TodoList(props) {
         <View style={styles.container}>
             <FlatList
                 style={styles.list}
-                data={props.todos}
-                extraData={props.todos}
+                data={props.todos.reverse()}
+                extraData={props.todos.reverse()}
                 renderItem={({item}) => 
                     <Todo 
                         keyExtractor={item.id}

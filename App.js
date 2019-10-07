@@ -80,7 +80,8 @@ function TodoCollectionsScreen(props) {
   const getTodoCollectionIds = function(userId) {
     return db.collection('users').doc(userId)
       .onSnapshot(function(doc) {
-      setTodoCollectionIds(doc.data().todoCollections.reverse())
+      const ids = doc.data().todoCollections.reverse();
+      setTodoCollectionIds(ids)
     })
   }
 
