@@ -5,14 +5,14 @@ export default function TodoCollection(props) {
     return (
         
         <View style={styles.container}>
+            <Button 
+                title={props.todoCollection.data.name}
+                onPress={() => props.navigation.navigate('TodoScreen', props)}
+            />
             <Button
                 onPress={() => props.deleteTodoCollection(props.todoCollection.id)}
                 title='x'
                 color='red'
-            />
-            <Button 
-                title={props.todoCollection.data.name}
-                onPress={() => props.navigation.navigate('TodoScreen', props)}
             />
         </View>
     )

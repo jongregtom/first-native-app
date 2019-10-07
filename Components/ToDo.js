@@ -1,18 +1,33 @@
-import React from 'react';
-import { StyleSheet, View, Text, Button } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { StyleSheet, View, Switch, Text, Button } from 'react-native';
 
 export default function Todo(props) {
+    const { completed } = props.todo.data;
+    //completed = false || true
+    const [lineThroughValue, setLineThroughValue] = useState((completed == false) ? 'none' : 'line-through')
+    const [completedValue, setCompletedValue] = useState(completed)
+
+    useEffect(() => {
+        setLineThroughValue((completedValue == false) ? 'none' : 'line-through')
+        props.changeTodoStatus(props.todo.id, completedValue)
+    }, [completedValue])
+
+    function toggleSwitch(value) {
+        setCompletedValue(value)
+    }
     return (
         
         <View style={styles.container}>
+            <Switch
+                onValueChange={toggleSwitch}
+                value={completedValue}/>
+            <Text style={[styles.text, {textDecorationLine: lineThroughValue}]}>
+                {props.todo.data.text}
+            </Text>
             <Button
-                onPress={() => props.deleteTodo(props.todoCollectionId, props.todo)}
+                onPress={() => props.deleteTodo(props.todoCollectionId, props.todo.id)}
                 title='x'
                 color='red'
-            />
-            <Button 
-                title={props.todo.text}
-                onPress={() => alert(props.todo.text)}
             />
         </View>
     )
@@ -24,6 +39,8 @@ const styles = StyleSheet.create({
      justifyContent: 'center',
      margin: 20,
      flexDirection: 'row'
+    },
+    text: {
     }
   });
   

@@ -19,7 +19,7 @@ export default function Input(props) {
                     if (props.addToDB) {
                         props.addToDB(textValue)
                     } else if (props.addTodo){
-                        props.addTodo(props.todoCollectionId, {text: textValue, completed: false, createdBy: '1234'})
+                        props.addTodo(props.todoCollectionId, {text: textValue, completed: false, createdBy: props.userId})
                     }
                     setTextValue('');
                     }
