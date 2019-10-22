@@ -4,14 +4,13 @@ import Todo from './Todo';
 import Input from './Input';
 
 export default function TodoList(props) {
-    console.log('props.todos', props.todos)
 
     return (
         <View style={styles.container}>
             <FlatList
                 style={styles.list}
-                data={props.todos.reverse()}
-                extraData={props.todos.reverse()}
+                data={props.todos}
+                extraData={props.todos}
                 renderItem={({item}) => 
                     <Todo 
                         keyExtractor={item.id}
@@ -28,8 +27,8 @@ export default function TodoList(props) {
 
 const styles = StyleSheet.create({
     container: {
-     flex: 1,
-     paddingTop: 22
+     flex: 10,
+     //paddingTop: 22
     },
     input: {
     },

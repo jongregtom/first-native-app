@@ -50,10 +50,6 @@ function TodoCollectionsScreen(props) {
     getTodoCollections(todoCollectionIds);
   }, [todoCollectionIds])
 
-  useEffect(() => {
-    console.log('todosState:', todos)
-  }, [todos])
-
   const getUser = async function() {
     const authUser = await Auth.currentAuthenticatedUser();
     const { payload } = authUser.signInUserSession.idToken;
@@ -80,8 +76,8 @@ function TodoCollectionsScreen(props) {
   const getTodoCollectionIds = function(userId) {
     return db.collection('users').doc(userId)
       .onSnapshot(function(doc) {
-      const ids = doc.data().todoCollections.reverse();
-      setTodoCollectionIds(ids)
+      const ids = doc.data().todoCollections;
+      setTodoCollectionIds(ids.reverse())
     })
   }
 
@@ -180,8 +176,9 @@ function TodoCollectionsScreen(props) {
 
   return (
     <View style={styles.container}>
-      <Input addToDB={addTodoCollection} placeholder={'Add New List'}></Input>
+      <Input style={styles.input} addToDB={addTodoCollection} placeholder={'Create New List'}></Input>
       <TodoCollectionList 
+        style={styles.list}
         todoCollections={todoCollections} 
         db={db} 
         getTodos={getTodos}
@@ -251,7 +248,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    //alignItems: 'center',
+    //justifyContent: 'center',
+    //marginTop: 20,
+  },
+  input: {
+    //flex: 1,
+  },
+  list: {
+    //flex: 5,
   },
 });

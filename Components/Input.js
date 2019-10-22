@@ -24,7 +24,7 @@ export default function Input(props) {
                     setTextValue('');
                     }
                 }
-                title='+'
+                title='Create'
                 color='blue' 
             />
         </View>
@@ -34,13 +34,15 @@ export default function Input(props) {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-        flex: 1
+        flex: 1,
+        alignItems: 'flex-end',
+        //borderBottomWidth: 1,
     }, 
     input: {
-        //borderWidth: 1,
-        width: 200, 
-        height: 30
+        borderBottomWidth: 1,
+        flex: 10,
     },
     button: {
+        flex: 1,
     }
 })

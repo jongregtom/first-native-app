@@ -39,10 +39,8 @@ export default function TodoCollectionList(props) {
 
 const styles = StyleSheet.create({
     container: {
-     flex: 1,
-     paddingTop: 22
-    },
-    input: {
+     flex: 10,
+     //paddingTop: 22
     },
     list: {
     }
