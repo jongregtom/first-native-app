@@ -4,13 +4,19 @@ import TodoList from './TodoList';
 import Input from './Input';
 
 export default function TodoScreen(props) {
-    const { params } = props.navigation.state;
+    let { params } = props.navigation.state;
+    console.log('props:', Object.keys(props))
+    console.log('params: ', Object.keys(params))
+    console.log('id', params.todoCollection)
     const { db } = params;
     const [todoCollectionValue, setTodoCollectionValue] = useState(null);
     const [todosValue, setTodosValue] = useState([]);
 
     useEffect(() => {
-        console.log('props ', props)
+      console.log('userQuery in todoScreen: ', params.userQuery)
+    })
+
+    useEffect(() => {
         const getTodoById = function(id, callback) {
           db.collection('todos').doc(id)
             .get().then(function(doc){
@@ -41,9 +47,14 @@ export default function TodoScreen(props) {
         <View style={styles.container}>
           <Input style={styles.input} userId={params.todoCollection.data.createdBy} addTodo={params.addTodo} placeholder={'Add New Item'} todoCollectionId={params.todoCollection.id}></Input>
           <TouchableOpacity
-            onPress={() =>
-              alert('Hi')
-              // {props.navigation.navigate('addUserScreen', props)}
+            onPress={() => {
+              
+              props.navigation.navigate('AddUserScreen', {
+                todoCollection: params.todoCollection,
+                searchUsers: params.searchUsers,
+                db: params.db
+              })
+              }
             }
           > 
             <View style={styles.button}>

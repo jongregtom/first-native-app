@@ -22,7 +22,9 @@ export default function TodoCollectionList(props) {
                             key={item.id}
                             navigation={props.navigation}
                             addTodo={props.addTodo}
-                            changeTodoStatus={props.changeTodoStatus}>
+                            changeTodoStatus={props.changeTodoStatus}
+                            searchUsers={props.searchUsers}
+                            userQuery={props.userQuery}>
                         </TodoCollection>
                     }
                 />

@@ -7,6 +7,7 @@ require("firebase/firestore");
 import TodoScreen from './Components/TodoScreen';
 import Input from './Components/Input';
 import TodoCollectionList from './Components/TodoCollectionList';
+import AddUserScreen from './Components/AddUserScreen';
 import SignOutButton from './Components/SignOutButton';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
@@ -36,6 +37,7 @@ function TodoCollectionsScreen(props) {
   const [todoIds, setTodoIds] = useState([]);
   const [todos, setTodos] = useState([]);
   const [user, setUser] = useState(null);
+  const [userQuery, setUserQuery] = useState([]);
 
   useEffect(() => {
     getUser()
@@ -49,6 +51,10 @@ function TodoCollectionsScreen(props) {
   useEffect(() => {
     getTodoCollections(todoCollectionIds);
   }, [todoCollectionIds])
+
+  useEffect(() => {
+    console.log('UQ', userQuery)
+  }, [userQuery])
 
   const getUser = async function() {
     const authUser = await Auth.currentAuthenticatedUser();
@@ -174,6 +180,32 @@ function TodoCollectionsScreen(props) {
     db.collection('todos').doc(id).update({completed: status})
   }
 
+  const searchUsers = async function(text) {
+    await db.collection('users').where('username', '==', text)
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+            // doc.data() is never undefined for query doc snapshots
+            setUserQuery(prevState => [...prevState, {id: doc.id,  data: doc.data()}])
+        });
+    })
+    .catch(function(error) {
+        console.log("Error getting documents: ", error);
+    });
+
+    await db.collection('users').where('email', '==', text)
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+            // doc.data() is never undefined for query doc snapshots
+            setUserQuery(prevState => [...prevState, {id: doc.id,  data: doc.data()}])
+        });
+    })
+    .catch(function(error) {
+        console.log("Error getting documents: ", error);
+    });
+  }
+
   return (
     <View style={styles.container}>
       <Input style={styles.input} addToDB={addTodoCollection} placeholder={'Create New List'}></Input>
@@ -187,7 +219,9 @@ function TodoCollectionsScreen(props) {
         addTodo={addTodo} 
         getTodoCollectionById={getTodoCollectionById} 
         navigation={props.navigation} 
-        changeTodoStatus={changeTodoStatus}>
+        changeTodoStatus={changeTodoStatus}
+        searchUsers={searchUsers}
+        userQuery={userQuery}>
       </TodoCollectionList>
     </View>
   );
@@ -206,8 +240,17 @@ const AppNavigator = createStackNavigator(
   },
   TodoScreen: {
     screen: TodoScreen,
-    navigationOptions: ({navigation}) => ({
+    navigationOptions: ({screenProps, navigation}) => ({
       title: navigation.state.params.todoCollection.data.name,
+      headerRight: (
+        <Button onPress={() => screenProps.signOut()} title='Sign Out' />
+      )
+    }),
+  },
+  AddUserScreen: {
+    screen: AddUserScreen,
+    navigationOptions: ({screenProps}) => ({
+      title: `Add Users`,
       headerRight: (
         <Button onPress={() => screenProps.signOut()} title='Sign Out' />
       )
