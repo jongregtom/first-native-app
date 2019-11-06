@@ -13,6 +13,7 @@ export default function TodoCollectionList(props) {
                     extraData={props.todoCollections}
                     renderItem={({item}) => 
                         <TodoCollection
+                            user={props.user}
                             todoCollection={item} 
                             deleteTodoCollection={props.deleteTodoCollection}
                             getTodos={props.getTodos}
@@ -23,7 +24,6 @@ export default function TodoCollectionList(props) {
                             navigation={props.navigation}
                             addTodo={props.addTodo}
                             changeTodoStatus={props.changeTodoStatus}
-                            searchUsers={props.searchUsers}
                             userQuery={props.userQuery}>
                         </TodoCollection>
                     }

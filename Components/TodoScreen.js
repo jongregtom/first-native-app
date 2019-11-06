@@ -50,6 +50,7 @@ export default function TodoScreen(props) {
             onPress={() => {
               
               props.navigation.navigate('AddUserScreen', {
+                user: params.user,
                 todoCollection: params.todoCollection,
                 searchUsers: params.searchUsers,
                 db: params.db

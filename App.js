@@ -40,6 +40,7 @@ function TodoCollectionsScreen(props) {
   const [userQuery, setUserQuery] = useState([]);
 
   useEffect(() => {
+    console.log('initial render')
     getUser()
       .then(user => setUser(user))
   }, [])
@@ -59,10 +60,12 @@ function TodoCollectionsScreen(props) {
   const getUser = async function() {
     const authUser = await Auth.currentAuthenticatedUser();
     const { payload } = authUser.signInUserSession.idToken;
-    const userData = {id: payload.aud, 
+    console.log('payload: ', payload)
+    const userData = {id: payload.sub, 
       username: payload['cognito:username'], 
       email: payload.email
     }
+    console.log('userdata:', userData)
     //check if user exists in DB
     const dbUser = await db.collection('users').doc(userData.id).get().then(function(doc) {
       if (doc.exists) {
@@ -180,37 +183,42 @@ function TodoCollectionsScreen(props) {
     db.collection('todos').doc(id).update({completed: status})
   }
 
-  const searchUsers = async function(text) {
-    await db.collection('users').where('username', '==', text)
-      .get()
-      .then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
-            // doc.data() is never undefined for query doc snapshots
-            setUserQuery(prevState => [...prevState, {id: doc.id,  data: doc.data()}])
-        });
-    })
-    .catch(function(error) {
-        console.log("Error getting documents: ", error);
-    });
+  // const searchUsers = async function(text) {
+  //   let result = [];
+  //   await db.collection('users').where('username', '==', text)
+  //     .get()
+  //     .then(function(querySnapshot) {
+  //       querySnapshot.forEach(function(doc) {
+  //           // doc.data() is never undefined for query doc snapshots
+  //           //setUserQuery(prevState => [...prevState, {id: doc.id,  data: doc.data()}])
+  //           result.push({id: doc.id, data: doc.data()})
+  //         });
+  //   })
+  //   .catch(function(error) {
+  //       console.log("Error getting documents: ", error);
+  //   });
 
-    await db.collection('users').where('email', '==', text)
-      .get()
-      .then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
-            // doc.data() is never undefined for query doc snapshots
-            setUserQuery(prevState => [...prevState, {id: doc.id,  data: doc.data()}])
-        });
-    })
-    .catch(function(error) {
-        console.log("Error getting documents: ", error);
-    });
-  }
+  //   await db.collection('users').where('email', '==', text)
+  //     .get()
+  //     .then(function(querySnapshot) {
+  //       querySnapshot.forEach(function(doc) {
+  //           // doc.data() is never undefined for query doc snapshots
+  //           setUserQuery(prevState => [...prevState, {id: doc.id,  data: doc.data()}])
+  //           result.push({id: doc.id, data: doc.data()})
+  //         });
+  //   })
+  //   .catch(function(error) {
+  //       console.log("Error getting documents: ", error);
+  //   });
+  //   return result;
+  // }
 
   return (
     <View style={styles.container}>
       <Input style={styles.input} addToDB={addTodoCollection} placeholder={'Create New List'}></Input>
       <TodoCollectionList 
         style={styles.list}
+        user={user}
         todoCollections={todoCollections} 
         db={db} 
         getTodos={getTodos}
@@ -220,7 +228,6 @@ function TodoCollectionsScreen(props) {
         getTodoCollectionById={getTodoCollectionById} 
         navigation={props.navigation} 
         changeTodoStatus={changeTodoStatus}
-        searchUsers={searchUsers}
         userQuery={userQuery}>
       </TodoCollectionList>
     </View>

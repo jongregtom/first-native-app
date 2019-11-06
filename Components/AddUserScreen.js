@@ -62,18 +62,21 @@ export default function AddUserScreen (props) {
                         }
                     >
                         <View style={styles.button}>
-                            <Text style={styles.buttonText}>Search</Text>
+                            <Text style={styles.buttonText}>Search Users</Text>
                         </View>
                     </TouchableOpacity>
             </View>
             {/* only render if userQuery results*/}
             {userQuery.length > 0 && 
                 <View>
-                    <Text>UserName: {userQuery[0].data.username}  Email: {userQuery[0].data.email}</Text>
-                    <Text>Is this the user you're looking for?</Text>
+                    <Text>UserName: {userQuery[0].data.username}</Text>  
+                    <Text>Email: {userQuery[0].data.email}</Text>
+                    <Text>Is this who you're looking for?</Text>
                     <View style={styles.resultsView}>
                         <TouchableOpacity
-                            onPress = {() => alert('yes')}
+                            onPress = {() => {
+                                params.addUserToFriendList(userQuery[0]);
+                            }}
                         >
                             <View style={styles.button}>
                                 <Text style={styles.buttonText}>Yes</Text>
